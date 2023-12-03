@@ -7,20 +7,33 @@ import constants from "./static/constants.json";
 
 function App() {
   const [ username, setUsername ] = useState("");
-  // const [ responseData, setResponseData] = useState(""); 
+  const [ isFetching, setIsFetching ] = useState(true);
+  const [ streamInfo, setStreamInfo ] = useState(false);
   const baseUrl = constants.api_url;
   const checkUsername = (e) => {
+    const headers = {
+      "Access-Control-Allow-Origin": "*",
+      'Content-Type': 'application/x-www-form-urlencoded',
+      "Accept": "application/json",
+      "Access-Control-Allow-Credentials": "true",
+    };
     if(e.key === "Enter") {
-      const url = baseUrl + "/live?username=" + username;
+      setIsFetching(true);
+      setUsername(e.target.value)
+      const url = baseUrl + "/live?username=" + e.target.value;
       console.log(url)
-      axios.get(url)
-      .then(response => {
-        console.log(response)
+      axios.get(url, {
+        headers: headers
       })
-      .catch((error) => console.log(error))
+      .then(response => {
+        console.log(response);
+        setStreamInfo(response["data"]);
+        setIsFetching(false);
+      })
+      .catch((error) => console.log(error));
     }
   };
-  return (
+  return isFetching ? (
     <div className="App">
     <h1>IS MY FAVORITE STREAMER STREAMING</h1>
       <header className="App-header">
@@ -32,13 +45,32 @@ function App() {
               size="md" 
               type="username"
               placeholder="Enter username here"
-              onChange={(e) => setUsername(e.target.value)}
               onKeyDown={(e) => checkUsername(e)}/>
           </Form.Group>
         </Form>
       </header>
     </div>
-  );
+  ): (
+    <div className="App">
+    <h1>IS MY FAVORITE STREAMER STREAMING</h1>
+      <header className="App-header">
+        <h2>
+          {username.toUpperCase()} IS { streamInfo ? "" : "NOT" } STREAMING
+        </h2>
+        <Form onSubmit={(e) => {
+          e.preventDefault();
+        }}>
+          <Form.Group className="mb-3" controlId="username">
+            <Form.Control
+              size="md" 
+              type="username"
+              placeholder="Enter username here"
+              onKeyDown={(e) => checkUsername(e)}/>
+          </Form.Group>
+        </Form>
+      </header>
+    </div>
+  )
 }
 
 export default App;

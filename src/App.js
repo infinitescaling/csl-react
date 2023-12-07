@@ -55,8 +55,12 @@ function App() {
     <h1>IS MY FAVORITE STREAMER STREAMING</h1>
       <header className="App-header">
           {
-            streamInfo ? <h2>{username.toUpperCase() + " IS STREAMING ON "} 
-            <a href={"twitch.tv/"+username}>TWITCH</a></h2> : 
+            streamInfo ? 
+            (<h2>{username.toUpperCase() + " IS STREAMING ON "} 
+              <a href={"twitch.tv/"+username}>
+                {streamInfo["platform"].toUpperCase()}
+              </a>
+            </h2>) : 
             <h2>{username.toUpperCase()} IS NOT STREAMING</h2>
           }
         <Form onSubmit={(e) => {
